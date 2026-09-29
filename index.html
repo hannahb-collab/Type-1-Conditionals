@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Conditional Grammar Quest</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            purple: '#6d28d9',
+                            pink: '#ec4899',
+                            teal: '#14b8a6',
+                            amber: '#f59e0b',
+                            blue: '#3b82f6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f3e8ff 100%);
+            min-height: 100vh;
+        }
+        
+        .font-display {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse-subtle {
+            animation: pulseSubtle 2s infinite;
+        }
+
+        @keyframes pulseSubtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-12 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-indigo-100 sticky top-0 z-50 transition-all">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('learn')">
+                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200 transform hover:rotate-6 transition-all">
+                    <i data-lucide="sparkles" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold font-display text-indigo-950 flex items-center gap-2">
+                        GrammarQuest <span class="bg-indigo-100 text-indigo-700 text-xs px-2.5 py-0.5 rounded-full font-sans font-semibold">Type 1</span>
+                    </h1>
+                    <p class="text-xs text-slate-500">Master real & possible future conditionals!</p>
+                </div>
+            </div>
+
+            <!-- Stats & Sound Bar -->
+            <div class="flex items-center gap-3">
+                <!-- Streak -->
+                <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 px-3 py-1.5 rounded-xl text-sm font-semibold shadow-sm" title="Current streak">
+                    <i data-lucide="flame" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
+                    <span id="streak-counter">0</span> Streak
+                </div>
+
+                <!-- XP -->
+                <div class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 px-3 py-1.5 rounded-xl text-sm font-semibold shadow-sm" title="Total XP">
+                    <i data-lucide="zap" class="w-4 h-4 text-indigo-500 fill-indigo-500"></i>
+                    <span id="xp-counter">0</span> XP
+                </div>
+
+                <!-- Sound Toggle -->
+                <button id="sound-btn" onclick="toggleSound()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors" title="Toggle audio effects">
+                    <i data-lucide="volume-2" id="sound-icon" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="max-w-6xl mx-auto px-4 mt-1 flex gap-2 overflow-x-auto no-scrollbar border-t border-slate-100/60 pt-2">
+            <button onclick="switchTab('learn')" id="tab-learn" class="tab-btn active px-4 py-2 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-indigo-600 text-white shadow-md shadow-indigo-100">
+                <i data-lucide="book-open" class="w-4 h-4"></i> Learn Rules
+            </button>
+            <button onclick="switchTab('builder')" id="tab-builder" class="tab-btn px-4 py-2 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-white text-slate-600 hover:bg-slate-100">
+                <i data-lucide="puzzle" class="w-4 h-4"></i> Sentence Lab
+            </button>
+            <button onclick="switchTab('practice')" id="tab-practice" class="tab-btn px-4 py-2 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-white text-slate-600 hover:bg-slate-100">
+                <i data-lucide="gamepad-2" class="w-4 h-4"></i> Practice Arena
+            </button>
+            <button onclick="switchTab('story')" id="tab-story" class="tab-btn px-4 py-2 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-white text-slate-600 hover:bg-slate-100">
+                <i data-lucide="compass" class="w-4 h-4"></i> Future Story
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-4 py-2 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-white text-slate-600 hover:bg-slate-100">
+                <i data-lucide="trophy" class="w-4 h-4"></i> Quiz Challenge
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 mt-6 flex-grow w-full">
+
+        <!-- TAB 1: LEARN RULES -->
+        <section id="sec-learn" class="tab-content space-y-6">
+            
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase mb-3 text-indigo-100">Grammar Basics</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold font-display leading-tight mb-3">What are Type 1 Conditionals?</h2>
+                    <p class="text-indigo-100 text-sm md:text-base leading-relaxed">
+                        We use <strong class="text-amber-300">Type 1 Conditionals</strong> (First Conditional) to talk about <strong class="underline decoration-pink-300">real or possible future situations</strong> using <strong class="text-emerald-300">will</strong> or modal verbs like <strong class="text-pink-200">can, may, might, should</strong>!
+                    </p>
+                </div>
+                <!-- Hero Illustration SVG -->
+                <div class="hidden md:block absolute right-6 bottom-0 w-64 h-64 pointer-events-none opacity-90">
+                    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="80" fill="white" fill-opacity="0.1"/>
+                        <circle cx="140" cy="60" r="22" fill="#FBBF24"/>
+                        <path d="M50 130 C 50 115, 70 115, 80 125 C 90 110, 120 110, 130 125 C 140 125, 150 135, 140 145 C 130 155, 50 155, 50 130 Z" fill="#E0F2FE"/>
+                        <path d="M90 110 L110 70 L130 110 Z" fill="#EC4899"/>
+                        <circle cx="110" cy="95" r="6" fill="#FDE047"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Formula Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Golden Rule Formula -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-100 card-shadow relative">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg">1</div>
+                        <h3 class="text-lg font-bold font-display text-slate-800">The Golden Formula</h3>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 mb-4 text-center">
+                        <span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-lg font-bold text-xs">If + Present Simple</span>
+                        <span class="text-slate-400 font-bold mx-1">+</span>
+                        <span class="bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-lg font-bold text-xs">will + base verb</span>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-100">
+                            <p class="text-slate-700">If it <span class="font-bold text-emerald-600">rains</span> tomorrow, we <span class="font-bold text-indigo-600">will stay</span> indoors.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reverse Order Rule -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-100 card-shadow">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg">2</div>
+                        <h3 class="text-lg font-bold font-display text-slate-800">Flipping the Order!</h3>
+                    </div>
+
+                    <p class="text-xs text-slate-600 mb-3">
+                        Put the result clause first! <strong class="text-purple-700">No comma</strong> is needed between clauses.
+                    </p>
+
+                    <div class="bg-purple-50 p-3 rounded-2xl border border-purple-200 text-xs font-semibold text-purple-900 mb-2">
+                        We will stay indoors if it rains tomorrow.
+                    </div>
+                </div>
+
+                <!-- Modal Verbs Extension Card -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-100 card-shadow">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-lg">3</div>
+                        <h3 class="text-lg font-bold font-display text-slate-800">Using Modal Verbs ✨</h3>
+                    </div>
+
+                    <p class="text-xs text-slate-600 mb-3">
+                        Instead of <code class="bg-indigo-100 px-1 rounded text-indigo-800">will</code>, use <strong class="text-pink-600">can, may, might, or should</strong> for ability, permission, or possibility!
+                    </p>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2 rounded-xl bg-pink-50 border border-pink-100">
+                            <span class="font-bold text-pink-700">Ability (能力):</span> "If you finish early, you <span class="font-bold underline">can</span> go play."
+                        </div>
+                        <div class="p-2 rounded-xl bg-amber-50 border border-amber-100">
+                            <span class="font-bold text-amber-700">Possibility (可能性):</span> "If it snows, we <span class="font-bold underline">might</span> build a snowman."
+                        </div>
+                        <div class="p-2 rounded-xl bg-blue-50 border border-blue-100">
+                            <span class="font-bold text-blue-700">Advice (建議):</span> "If you feel sick, you <span class="font-bold underline">should</span> rest."
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Visual Guide Grid -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 card-shadow">
+                <h3 class="text-xl font-bold font-display text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="image" class="w-5 h-5 text-indigo-500"></i>
+                    Real Life Examples & Scenarios
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Example 1 -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-b from-blue-50 to-indigo-50 border border-blue-100 text-center space-y-3 hover:shadow-md transition-shadow">
+                        <div class="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm">
+                            🌧️ ➡️ 🏠
+                        </div>
+                        <h4 class="font-bold text-slate-800">Weather Plan</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            "If it <span class="font-bold text-emerald-600">is</span> sunny, we <span class="font-bold text-indigo-600">will go</span> to the beach."
+                        </p>
+                    </div>
+
+                    <!-- Example 2 -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-b from-emerald-50 to-teal-50 border border-emerald-100 text-center space-y-3 hover:shadow-md transition-shadow">
+                        <div class="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm">
+                            📚 ➡️ 💯
+                        </div>
+                        <h4 class="font-bold text-slate-800">School Success</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            "If you <span class="font-bold text-emerald-600">study</span> hard, you <span class="font-bold text-indigo-600">will pass</span> the exam!"
+                        </p>
+                    </div>
+
+                    <!-- Example 3 -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-b from-pink-50 to-rose-50 border border-pink-100 text-center space-y-3 hover:shadow-md transition-shadow">
+                        <div class="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm">
+                            ⏰ ➡️ 🏃
+                        </div>
+                        <h4 class="font-bold text-slate-800">Negative Forms</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            "If we <span class="font-bold text-emerald-600">don't hurry</span>, we <span class="font-bold text-indigo-600">will miss</span> the bus!"
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Button to Practice -->
+            <div class="text-center pt-2">
+                <button onclick="switchTab('builder')" class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold px-8 py-3.5 rounded-2xl shadow-lg shadow-indigo-200 hover:scale-105 active:scale-95 transition-all text-base">
+                    Try the Interactive Sentence Lab <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 2: SENTENCE LAB (MIX & MATCH) -->
+        <section id="sec-builder" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 card-shadow space-y-6">
+                <div>
+                    <span class="bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full font-bold uppercase">Interactive Mixer</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold font-display text-slate-800 mt-1">Sentence Builder Lab 🧪</h2>
+                    <p class="text-slate-600 text-sm">Combine different conditions and results to build First Conditionals with <strong>will</strong> and <strong>modal verbs</strong>!</p>
+                </div>
+
+                <!-- Interactive Builder Controls -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- IF Clause selector -->
+                    <div class="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-emerald-800 flex items-center gap-1.5 text-sm">
+                                <i data-lucide="git-branch" class="w-4 h-4 text-emerald-600"></i> Condition Clause (If + Present Simple)
+                            </span>
+                            <span class="text-xs bg-emerald-200 text-emerald-800 font-bold px-2 py-0.5 rounded">Present</span>
+                        </div>
+                        <select id="builder-if" onchange="updateSentenceLab()" class="w-full bg-white border border-emerald-300 text-slate-800 font-semibold rounded-xl p-3 focus:ring-2 focus:ring-emerald-400 outline-none">
+                            <option value="it rains tomorrow">it rains tomorrow</option>
+                            <option value="you eat all your vegetables">you eat all your vegetables</option>
+                            <option value="we don't wake up early">we don't wake up early</option>
+                            <option value="she practices every day">she practices every day</option>
+                            <option value="you feel tired tonight">you feel tired tonight</option>
+                        </select>
+                    </div>
+
+                    <!-- WILL / MODAL Clause selector -->
+                    <div class="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-indigo-800 flex items-center gap-1.5 text-sm">
+                                <i data-lucide="sparkle" class="w-4 h-4 text-indigo-600"></i> Result Clause (will / modal verb)
+                            </span>
+                            <span class="text-xs bg-indigo-200 text-indigo-800 font-bold px-2 py-0.5 rounded">Future / Modal</span>
+                        </div>
+                        <select id="builder-will" onchange="updateSentenceLab()" class="w-full bg-white border border-indigo-300 text-slate-800 font-semibold rounded-xl p-3 focus:ring-2 focus:ring-indigo-400 outline-none">
+                            <option value="we will stay at home">we will stay at home (Will)</option>
+                            <option value="you can have some ice cream">you can have some ice cream (Modal: Can)</option>
+                            <option value="we might miss the train">we might miss the train (Modal: Might)</option>
+                            <option value="she can play in the concert">she can play in the concert (Modal: Can)</option>
+                            <option value="you should go to sleep early">you should go to sleep early (Modal: Should)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Live Preview Display -->
+                <div class="bg-slate-900 rounded-2xl p-6 text-white text-center space-y-4 shadow-inner">
+                    <p class="text-xs font-semibold text-slate-400 tracking-wider uppercase">Live Sentence Output</p>
+                    
+                    <div id="builder-output" class="text-xl md:text-2xl font-display leading-relaxed min-h-[60px] flex items-center justify-center flex-wrap gap-2">
+                        <!-- JS injected output -->
+                    </div>
+
+                    <div class="flex items-center justify-center gap-4 text-xs text-slate-400 pt-2 border-t border-slate-800">
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-400 inline-block"></span> Condition</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-indigo-400 inline-block"></span> Outcome</span>
+                    </div>
+                </div>
+
+                <!-- Order Toggle Switch -->
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-sm">Swap Clause Order</h4>
+                        <p class="text-xs text-slate-500">Put the result clause before the condition (removes comma automatically!)</p>
+                    </div>
+                    <button id="builder-swap-btn" onclick="toggleClauseOrder()" class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-bold text-sm px-4 py-2 rounded-xl transition-all flex items-center gap-2">
+                        <i data-lucide="repeat" class="w-4 h-4"></i> Swap Order
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: PRACTICE ARENA -->
+        <section id="sec-practice" class="tab-content hidden space-y-6">
+            
+            <!-- Mode Switcher -->
+            <div class="bg-white rounded-2xl p-2 border border-slate-100 card-shadow flex gap-2 overflow-x-auto">
+                <button onclick="setPracticeMode('fill')" id="pmode-fill" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-indigo-600 text-white transition-all">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i> Fill in Verbs
+                </button>
+                <button onclick="setPracticeMode('fix')" id="pmode-fix" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-slate-100 text-slate-600 transition-all">
+                    <i data-lucide="search-x" class="w-4 h-4"></i> Find the Mistake
+                </button>
+            </div>
+
+            <!-- PRACTICE MODE 1: FILL IN VERBS -->
+            <div id="practice-fill-card" class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 card-shadow space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Challenge 1</span>
+                        <h3 class="text-2xl font-bold font-display text-slate-800 mt-1">Conjugate the Verbs</h3>
+                    </div>
+                    <span id="practice-progress" class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">Question 1 of 5</span>
+                </div>
+
+                <div id="fill-question-box" class="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-lg md:text-xl font-medium text-slate-800 leading-relaxed text-center">
+                    <!-- JS Injected -->
+                </div>
+
+                <div id="fill-options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- JS Options Buttons Injected -->
+                </div>
+
+                <div id="practice-feedback" class="hidden p-4 rounded-2xl text-center font-bold bounce-in text-sm md:text-base">
+                    <!-- Feedback injected -->
+                </div>
+            </div>
+
+            <!-- PRACTICE MODE 2: MISTAKE DETECTIVE -->
+            <div id="practice-fix-card" class="hidden bg-white rounded-3xl p-6 md:p-8 border border-slate-100 card-shadow space-y-6">
+                <div>
+                    <span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Grammar Detective</span>
+                    <h3 class="text-2xl font-bold font-display text-slate-800 mt-1">Spot & Fix the Error 🕵️‍♂️</h3>
+                    <p class="text-slate-600 text-sm mt-1">Click on the option that fixes the mistake in the sentence below!</p>
+                </div>
+
+                <div id="fix-question-box" class="p-6 bg-rose-50/50 rounded-2xl border border-rose-200 text-lg md:text-xl font-bold text-slate-800 text-center">
+                    <!-- JS Injected -->
+                </div>
+
+                <div id="fix-options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- JS Injected -->
+                </div>
+
+                <div id="fix-feedback" class="hidden p-4 rounded-2xl text-center font-bold bounce-in text-sm">
+                    <!-- Feedback injected -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: FUTURE STORY ADVENTURE -->
+        <section id="sec-story" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 card-shadow space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Choose Your Future</span>
+                        <h2 class="text-2xl md:text-3xl font-extrabold font-display text-slate-800 mt-1">Island Survival Adventure 🏝️</h2>
+                    </div>
+                    <button onclick="resetStory()" class="text-xs text-slate-500 hover:text-indigo-600 underline font-semibold">
+                        Restart Story
+                    </button>
+                </div>
+
+                <!-- Story Display Area -->
+                <div class="relative bg-gradient-to-b from-sky-50 to-amber-50 rounded-2xl p-6 border border-sky-100 space-y-4">
+                    <div id="story-avatar" class="text-5xl text-center mb-2">⛵</div>
+                    <p id="story-text" class="text-slate-800 font-medium text-base md:text-lg text-center leading-relaxed">
+                        You are stranded on a mysterious tropical island! What will you do first?
+                    </p>
+                </div>
+
+                <!-- Story Choices (written in first conditional) -->
+                <div id="story-choices" class="grid grid-cols-1 gap-3">
+                    <!-- Options JS injected -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: QUIZ CHALLENGE -->
+        <section id="sec-quiz" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 card-shadow space-y-6">
+                
+                <!-- Quiz Screen 1: Start Screen -->
+                <div id="quiz-start-screen" class="text-center py-8 space-y-6 max-w-md mx-auto">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-amber-600 rounded-3xl flex items-center justify-center text-white mx-auto shadow-lg shadow-amber-200">
+                        <i data-lucide="trophy" class="w-10 h-10"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-extrabold font-display text-slate-800">Grammar Master Quiz</h2>
+                        <p class="text-slate-600 text-sm mt-2">Test your knowledge with 5 dynamic questions to earn your First Conditional Badge and bonus XP!</p>
+                    </div>
+                    <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-indigo-200 hover:scale-105 active:scale-95 transition-all text-lg">
+                        Start Quiz Challenge
+                    </button>
+                </div>
+
+                <!-- Quiz Screen 2: Active Question -->
+                <div id="quiz-active-screen" class="hidden space-y-6">
+                    <div class="flex items-center justify-between text-sm font-semibold text-slate-500">
+                        <span id="quiz-question-number">Question 1/5</span>
+                        <div class="w-1/3 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div id="quiz-progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="quiz-score-live" class="text-indigo-600 font-bold">0 Pts</span>
+                    </div>
+
+                    <div id="quiz-q-text" class="p-6 bg-indigo-50/50 rounded-2xl border border-indigo-100 text-xl font-bold text-slate-800 text-center">
+                        <!-- JS injected -->
+                    </div>
+
+                    <div id="quiz-options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- JS injected -->
+                    </div>
+                </div>
+
+                <!-- Quiz Screen 3: Results -->
+                <div id="quiz-result-screen" class="hidden text-center py-6 space-y-6">
+                    <div id="quiz-result-icon" class="text-6xl animate-bounce">🎉</div>
+                    <div>
+                        <h2 id="quiz-result-title" class="text-3xl font-extrabold font-display text-slate-800">Awesome Job!</h2>
+                        <p id="quiz-result-desc" class="text-slate-600 text-sm mt-1">You scored 5 out of 5!</p>
+                    </div>
+
+                    <!-- Badge earned card -->
+                    <div class="p-4 bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-2xl max-w-xs mx-auto flex items-center gap-3 text-left">
+                        <div class="w-12 h-12 bg-amber-500 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow">
+                            🏅
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-amber-900 text-sm">Badge Unlocked!</h4>
+                            <p class="text-xs text-amber-700">Type 1 Conditional Master</p>
+                        </div>
+                    </div>
+
+                    <button onclick="resetQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-xl transition-all">
+                        Try Again
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Application Logic Script -->
+    <script>
+        // Global App State
+        const state = {
+            xp: 0,
+            streak: 0,
+            soundEnabled: true,
+            practiceFillIdx: 0,
+            practiceFixIdx: 0,
+            storyStep: 0,
+            quizIdx: 0,
+            quizScore: 0,
+            isReversed: false
+        };
+
+        // Audio Effects Generator (Web Audio API)
+        function playAudio(type) {
+            if (!state.soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.15); // E5
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(140, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(400, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.08);
+                }
+            } catch (e) {
+                // Audio Context unavailable
+            }
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (state.soundEnabled) {
+                icon.setAttribute('data-lucide', 'volume-2');
+            } else {
+                icon.setAttribute('data-lucide', 'volume-x');
+            }
+            lucide.createIcons();
+        }
+
+        function addXP(amount) {
+            state.xp += amount;
+            document.getElementById('xp-counter').innerText = state.xp;
+        }
+
+        function incrementStreak() {
+            state.streak++;
+            document.getElementById('streak-counter').innerText = state.streak;
+        }
+
+        function resetStreak() {
+            state.streak = 0;
+            document.getElementById('streak-counter').innerText = state.streak;
+        }
+
+        function switchTab(tabId) {
+            playAudio('click');
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn px-4 py-2 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-white text-slate-600 hover:bg-slate-100';
+            });
+
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = 'tab-btn active px-4 py-2 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-indigo-600 text-white shadow-md shadow-indigo-100';
+            }
+        }
+
+        function updateSentenceLab() {
+            const ifVal = document.getElementById('builder-if').value;
+            const willVal = document.getElementById('builder-will').value;
+            const output = document.getElementById('builder-output');
+
+            if (state.isReversed) {
+                // Main clause first (no comma)
+                const capitalizedResult = willVal.charAt(0).toUpperCase() + willVal.slice(1);
+                output.innerHTML = `
+                    <span class="text-indigo-300 font-bold px-2 py-1 bg-indigo-900/50 rounded-lg">${capitalizedResult}</span>
+                    <span class="text-emerald-300 font-bold px-2 py-1 bg-emerald-900/50 rounded-lg">if ${ifVal}</span>.
+                `;
+            } else {
+                // If clause first (with comma)
+                const capitalizedIf = ifVal.charAt(0).toUpperCase() + ifVal.slice(1);
+                output.innerHTML = `
+                    <span class="text-emerald-300 font-bold px-2 py-1 bg-emerald-900/50 rounded-lg">If ${capitalizedIf},</span>
+                    <span class="text-indigo-300 font-bold px-2 py-1 bg-indigo-900/50 rounded-lg">${willVal}</span>.
+                `;
+            }
+        }
+
+        function toggleClauseOrder() {
+            playAudio('click');
+            state.isReversed = !state.isReversed;
+            updateSentenceLab();
+        }
+
+        // Practice Data Sets - Varied option positions & Modal verbs included!
+        const fillQuestions = [
+            {
+                text: "If she _______ (study) hard, she _______ (pass) the exam.",
+                options: [
+                    { text: "studied / passed", correct: false },
+                    { text: "studies / will pass", correct: true },
+                    { text: "will study / passes", correct: false },
+                    { text: "studies / pass", correct: false }
+                ],
+                explanation: "The 'if' clause requires Present Simple ('studies'), and the main clause requires 'will + verb' ('will pass')."
+            },
+            {
+                text: "If it _______ (rain) this afternoon, we _______ (can / stay) indoors.",
+                options: [
+                    { text: "will rain / can stay", correct: false },
+                    { text: "rain / stay", correct: false },
+                    { text: "rains / can stay", correct: true },
+                    { text: "rains / could stayed", correct: false }
+                ],
+                explanation: "Modal 'can' indicates ability or permission in the result clause: 'rains / can stay'."
+            },
+            {
+                text: "They _______ (might / arrive) late if they _______ (miss) the 8 AM bus.",
+                options: [
+                    { text: "will arrive / missed", correct: false },
+                    { text: "arrives / misses", correct: false },
+                    { text: "arrive / will miss", correct: false },
+                    { text: "might arrive / miss", correct: true }
+                ],
+                explanation: "The result clause comes first using modal 'might arrive'. The 'if' clause uses present simple 'miss'."
+            },
+            {
+                text: "If you _______ (feel) sick, you _______ (should / see) a doctor.",
+                options: [
+                    { text: "will feel / should see", correct: false },
+                    { text: "feel / should see", correct: true },
+                    { text: "feels / should saw", correct: false },
+                    { text: "feel / should to see", correct: false }
+                ],
+                explanation: "Use modal 'should' for advice in the result clause ('should see'). After modal verbs, use base verb without 'to'."
+            },
+            {
+                text: "If we _______ (save) enough money, we _______ (can / buy) a new bicycle.",
+                options: [
+                    { text: "save / can buy", correct: true },
+                    { text: "will save / buy", correct: false },
+                    { text: "saves / can buy", correct: false },
+                    { text: "save / can to buy", correct: false }
+                ],
+                explanation: "'If + save' (Present) -> 'can buy' (Modal result)."
+            }
+        ];
+
+        const fixQuestions = [
+            {
+                sentence: "If you visit Paris, you <span class='text-rose-600 underline font-extrabold'>should to visit</span> the Eiffel Tower.",
+                options: [
+                    { text: "Change 'should to visit' to 'should visit'", correct: true },
+                    { text: "Change 'visit Paris' to 'will visit Paris'", correct: false },
+                    { text: "Change 'should to visit' to 'should visited'", correct: false }
+                ],
+                explanation: "Modal verbs like 'should' are directly followed by the base verb (no 'to')."
+            },
+            {
+                sentence: "If I <span class='text-rose-600 underline font-extrabold'>will see</span> him, I can give him the key.",
+                options: [
+                    { text: "Change 'can give' to 'gives'", correct: false },
+                    { text: "Change 'will see' to 'see'", correct: true },
+                    { text: "Change 'will see' to 'saw'", correct: false }
+                ],
+                explanation: "Never put 'will' inside the IF-clause! Use Present Simple ('see')."
+            },
+            {
+                sentence: "She might come to the party if she <span class='text-rose-600 underline font-extrabold'>finished</span> her work.",
+                options: [
+                    { text: "Change 'might come' to 'comes'", correct: false },
+                    { text: "Change 'finished' to 'will finish'", correct: false },
+                    { text: "Change 'finished' to 'finishes'", correct: true }
+                ],
+                explanation: "Type 1 conditionals require present simple ('finishes') in the if-clause."
+            },
+            {
+                sentence: "If he <span class='text-rose-600 underline font-extrabold'>don't study</span>, he will fail the quiz.",
+                options: [
+                    { text: "Change 'don't study' to 'doesn't study'", correct: true },
+                    { text: "Change 'will fail' to 'fails'", correct: false },
+                    { text: "Change 'don't study' to 'won't study'", correct: false }
+                ],
+                explanation: "He/She/It requires 'doesn't' in present simple negative."
+            }
+        ];
+
+        function setPracticeMode(mode) {
+            playAudio('click');
+            const fillCard = document.getElementById('practice-fill-card');
+            const fixCard = document.getElementById('practice-fix-card');
+            const btnFill = document.getElementById('pmode-fill');
+            const btnFix = document.getElementById('pmode-fix');
+
+            if (mode === 'fill') {
+                fillCard.classList.remove('hidden');
+                fixCard.classList.add('hidden');
+                btnFill.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-indigo-600 text-white transition-all';
+                btnFix.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-slate-100 text-slate-600 transition-all';
+                renderFillQuestion();
+            } else {
+                fillCard.classList.add('hidden');
+                fixCard.classList.remove('hidden');
+                btnFix.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-indigo-600 text-white transition-all';
+                btnFill.className = 'flex-1 py-2.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-slate-100 text-slate-600 transition-all';
+                renderFixQuestion();
+            }
+        }
+
+        function renderFillQuestion() {
+            const q = fillQuestions[state.practiceFillIdx];
+            document.getElementById('practice-progress').innerText = `Question ${state.practiceFillIdx + 1} of ${fillQuestions.length}`;
+            document.getElementById('fill-question-box').innerText = q.text;
+
+            const grid = document.getElementById('fill-options-grid');
+            grid.innerHTML = '';
+            document.getElementById('practice-feedback').className = 'hidden';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 hover:border-indigo-400 font-bold text-slate-700 transition-all text-left hover:bg-indigo-50/30';
+                btn.innerText = opt.text;
+                btn.onclick = () => checkFillAnswer(opt, q);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkFillAnswer(selected, question) {
+            const fb = document.getElementById('practice-feedback');
+            fb.classList.remove('hidden');
+
+            if (selected.correct) {
+                playAudio('success');
+                incrementStreak();
+                addXP(15);
+                fb.className = 'p-4 rounded-2xl text-center font-bold bounce-in text-sm bg-emerald-100 text-emerald-800 border border-emerald-300';
+                fb.innerHTML = `✨ Correct! ${question.explanation}`;
+
+                confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 } });
+
+                setTimeout(() => {
+                    state.practiceFillIdx = (state.practiceFillIdx + 1) % fillQuestions.length;
+                    renderFillQuestion();
+                }, 2200);
+            } else {
+                playAudio('error');
+                resetStreak();
+                fb.className = 'p-4 rounded-2xl text-center font-bold bounce-in text-sm bg-rose-100 text-rose-800 border border-rose-300';
+                fb.innerHTML = `❌ Not quite! ${question.explanation}`;
+            }
+        }
+
+        function renderFixQuestion() {
+            const q = fixQuestions[state.practiceFixIdx];
+            document.getElementById('fix-question-box').innerHTML = q.sentence;
+
+            const grid = document.getElementById('fix-options-grid');
+            grid.innerHTML = '';
+            document.getElementById('fix-feedback').className = 'hidden';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 hover:border-indigo-400 font-bold text-slate-700 transition-all text-left hover:bg-indigo-50/30';
+                btn.innerText = opt.text;
+                btn.onclick = () => checkFixAnswer(opt, q);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkFixAnswer(selected, question) {
+            const fb = document.getElementById('fix-feedback');
+            fb.classList.remove('hidden');
+
+            if (selected.correct) {
+                playAudio('success');
+                incrementStreak();
+                addXP(15);
+                fb.className = 'p-4 rounded-2xl text-center font-bold bounce-in text-sm bg-emerald-100 text-emerald-800 border border-emerald-300';
+                fb.innerHTML = `🎉 Great Detective Work! ${question.explanation}`;
+
+                confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 } });
+
+                setTimeout(() => {
+                    state.practiceFixIdx = (state.practiceFixIdx + 1) % fixQuestions.length;
+                    renderFixQuestion();
+                }, 2200);
+            } else {
+                playAudio('error');
+                resetStreak();
+                fb.className = 'p-4 rounded-2xl text-center font-bold bounce-in text-sm bg-rose-100 text-rose-800 border border-rose-300';
+                fb.innerHTML = `❌ Try again! ${question.explanation}`;
+            }
+        }
+
+        // Tab 4: Future Story Adventure Engine
+        const storyTree = [
+            {
+                avatar: "🏝️",
+                text: "You are stranded on a sunny island. What will you build first?",
+                choices: [
+                    { text: "If I build a shelter, I can stay dry during the rain.", next: 1 },
+                    { text: "If I build a signal fire, rescue boats might spot me.", next: 2 }
+                ]
+            },
+            {
+                avatar: "🏕️",
+                text: "Your shelter is built! Now you need food.",
+                choices: [
+                    { text: "If I pick coconut palms, I can drink fresh fruit water.", next: 3 },
+                    { text: "If I fish in the lagoon, I may catch fresh fish.", next: 3 }
+                ]
+            },
+            {
+                avatar: "🔥",
+                text: "Your fire is roaring! Dark clouds are gathering in the sky.",
+                choices: [
+                    { text: "If I cover the firewood, it won't get wet.", next: 3 },
+                    { text: "If I make a torch, I can explore the island cave.", next: 3 }
+                ]
+            },
+            {
+                avatar: "🚢",
+                text: "A rescue ship appears on the horizon! Congratulations, your conditional choices saved you!",
+                choices: [
+                    { text: "Restart Adventure 🔄", next: 0 }
+                ]
+            }
+        ];
+
+        function renderStoryStep() {
+            const node = storyTree[state.storyStep];
+            document.getElementById('story-avatar').innerText = node.avatar;
+            document.getElementById('story-text').innerText = node.text;
+
+            const choicesContainer = document.getElementById('story-choices');
+            choicesContainer.innerHTML = '';
+
+            node.choices.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full p-4 rounded-2xl bg-white border-2 border-slate-200 hover:border-indigo-500 font-bold text-slate-800 hover:bg-indigo-50 transition-all text-left flex items-center justify-between shadow-sm';
+                btn.innerHTML = `<span>${c.text}</span> <i data-lucide="chevron-right" class="w-5 h-5 text-indigo-500"></i>`;
+                btn.onclick = () => {
+                    playAudio('click');
+                    if (c.next === 0) {
+                        resetStory();
+                    } else {
+                        addXP(10);
+                        state.storyStep = c.next;
+                        renderStoryStep();
+                    }
+                };
+                choicesContainer.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        function resetStory() {
+            state.storyStep = 0;
+            renderStoryStep();
+        }
+
+        // Tab 5: Quiz Challenge Data & Engine
+        const quizData = [
+            {
+                q: "If you feel tired tonight, you ________ go to bed early.",
+                options: ["will to", "should", "must to", "shall to"],
+                correct: 1
+            },
+            {
+                q: "If we finish our homework early, we ________ watch a movie.",
+                options: ["can", "will can", "could to", "are"],
+                correct: 0
+            },
+            {
+                q: "Which sentence correctly uses a MODAL VERB in a Type 1 Conditional?",
+                options: [
+                    "If it will rain, you might need an umbrella.",
+                    "If it rains, you might to need an umbrella.",
+                    "If it rains, you might need an umbrella.",
+                    "If it rain, you might need an umbrella."
+                ],
+                correct: 2
+            },
+            {
+                q: "If she practices every day, she ________ win the piano competition.",
+                options: ["may win", "winning", "may to win", "wins"],
+                correct: 0
+            },
+            {
+                q: "If you ________ early, you ________ catch the morning train.",
+                options: ["will wake up / can", "wake up / can", "wakes up / will", "wake up / could to"],
+                correct: 1
+            }
+        ];
+
+        function startQuiz() {
+            playAudio('click');
+            state.quizIdx = 0;
+            state.quizScore = 0;
+            document.getElementById('quiz-start-screen').classList.add('hidden');
+            document.getElementById('quiz-active-screen').classList.remove('hidden');
+            document.getElementById('quiz-result-screen').classList.add('hidden');
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const q = quizData[state.quizIdx];
+            document.getElementById('quiz-question-number').innerText = `Question ${state.quizIdx + 1} of ${quizData.length}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((state.quizIdx) / quizData.length) * 100}%`;
+            document.getElementById('quiz-score-live').innerText = `${state.quizScore} Pts`;
+            document.getElementById('quiz-q-text').innerText = q.q;
+
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 hover:border-indigo-500 font-bold text-slate-800 transition-all text-left hover:bg-indigo-50/50';
+                btn.innerText = optText;
+                btn.onclick = () => selectQuizAnswer(index);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectQuizAnswer(selectedIndex) {
+            const q = quizData[state.quizIdx];
+            if (selectedIndex === q.correct) {
+                playAudio('success');
+                state.quizScore += 20;
+                addXP(20);
+                incrementStreak();
+            } else {
+                playAudio('error');
+                resetStreak();
+            }
+
+            state.quizIdx++;
+
+            if (state.quizIdx < quizData.length) {
+                renderQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            document.getElementById('quiz-active-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.remove('hidden');
+
+            const title = document.getElementById('quiz-result-title');
+            const desc = document.getElementById('quiz-result-desc');
+
+            desc.innerText = `You scored ${state.quizScore} out of 100 points!`;
+
+            if (state.quizScore >= 80) {
+                playAudio('success');
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                title.innerText = "🏆 Grammar Master!";
+            } else {
